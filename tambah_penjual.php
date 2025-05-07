@@ -23,11 +23,41 @@ if (isset($_POST['simpan'])) {
   <meta charset="UTF-8">
   <title>Tambah Penjual</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background: linear-gradient(135deg, #f8f9fa, #e3e3e3);
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .container {
+      max-width: 500px;
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      margin-top: 50px;
+    }
+
+    h3 {
+      text-align: center;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .btn-primary {
+      background-color: #6c63ff;
+      border: none;
+    }
+
+    .btn-primary:hover {
+      background-color: #5145cd;
+    }
+  </style>
 </head>
 
-<body class="bg-light">
-  <div class="container mt-5">
-    <h3 class="mb-4">Tambah Penjual Baru</h3>
+<body>
+  <div class="container">
+    <h3>Tambah Penjual Baru</h3>
     <form method="POST">
       <div class="mb-3">
         <label for="nama" class="form-label">Nama Penjual</label>
@@ -37,8 +67,10 @@ if (isset($_POST['simpan'])) {
         <label for="alamat" class="form-label">Alamat</label>
         <textarea class="form-control" name="alamat" rows="3" required></textarea>
       </div>
-      <button type="submit" name="simpan" class="btn btn-primary">Simpan</button>
-      <a href="tampil_penjual.php" class="btn btn-secondary">Batal</a>
+      <div class="text-center">
+        <button type="submit" name="simpan" class="btn btn-primary px-4">Simpan</button>
+        <a href="tampil_penjual.php" class="btn btn-secondary px-4">Batal</a>
+      </div>
     </form>
   </div>
 </body>
