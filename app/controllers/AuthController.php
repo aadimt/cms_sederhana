@@ -1,32 +1,35 @@
 <?php
 
-class AuthController extends Controller {
+require_once 'app/models/User.php';
 
-    public function login() {
+class AuthController extends Controller
+{
+    public function login()
+    {
+        $error = '';
+
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $email = $_POST['email'];
-            $password = $_POST['password'];
+            $username = $_POST['username'] ?? '';
+            $password = $_POST['password'] ?? '';
 
-            // login sederhana
-            if ($email === 'admin@example.com' && $password === '123456') {
-                $_SESSION['user'] = $email;
-                header('Location: /cms_sederhana/home');
+            $userModel = new User();
+            if ($userModel->login($username, $password)) {
+                $_SESSION['user'] = $username;
+                header('Location: ' . BASE_URL . '/home');
                 exit;
             } else {
-                $error = "Login gagal!";
+                $error = 'Username atau password salah!';
             }
         }
 
-        $this->view('auth/login', isset($error) ? ['error' => $error] : []);
+        $this->view('auth/login', ['error' => $error]);
     }
 
-    public function register() {
-        $this->view('auth/register');
-    }
-
-    public function logout() {
+    public function logout()
+    {
         session_destroy();
-        header('Location: /cms_sederhana/auth/login');
+        header('Location: ' . BASE_URL . '/auth/login');
         exit;
     }
 }
+

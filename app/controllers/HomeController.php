@@ -1,12 +1,14 @@
 <?php
 
-class HomeController extends Controller {
-    public function index() {
+class HomeController extends Controller
+{
+    public function index()
+    {
         if (!isset($_SESSION['user'])) {
-            header('Location: /cms_sederhana/auth/login');
+            header('Location: ' . BASE_URL . '/auth/login');
             exit;
         }
 
-        $this->view('post/index');
+        $this->view('home/index', ['username' => $_SESSION['user']]);
     }
 }

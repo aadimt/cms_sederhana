@@ -1,12 +1,24 @@
-<div class="container mt-5">
-    <h2>Login</h2>
-    <?php if (isset($data['error'])): ?>
-        <div class="alert alert-danger"><?= $data['error']; ?></div>
-    <?php endif; ?>
-    <form method="POST" action="">
-        <input type="email" name="email" class="form-control mb-2" placeholder="Email" required>
-        <input type="password" name="password" class="form-control mb-2" placeholder="Password" required>
-        <button type="submit" class="btn btn-primary">Login</button>
-        <a href="/cms_sederhana/auth/register" class="btn btn-link">Register</a>
-    </form>
-</div>
+public function register()
+{
+    $error = '';
+    $success = '';
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $username = $_POST['username'] ?? '';
+        $password = $_POST['password'] ?? '';
+        $confirm  = $_POST['confirm'] ?? '';
+
+        if ($password !== $confirm) {
+            $error = 'Password tidak cocok.';
+        } elseif (empty($username) || empty($password)) {
+            $error = 'Semua field wajib diisi.';
+        } else {
+            // Simulasi register berhasil (di sistem nyata, disimpan ke database)
+            $success = 'Pendaftaran berhasil. Silakan login.';
+        }
+    }
+
+    $this->view('auth/register', ['error' => $error, 'success' => $success]);
+}
+
+
