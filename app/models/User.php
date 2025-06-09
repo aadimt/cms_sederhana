@@ -1,25 +1,19 @@
-<?php
-
-class User
+public function login()
 {
-    private $users = [
-        [
-            'username' => 'admin',
-            'password' => 'admin123' // Password plaintext untuk contoh (sebaiknya di-hash di sistem real)
-        ],
-        [
-            'username' => 'user',
-            'password' => 'user123'
-        ]
-    ];
+    $userModel = $this->model('User');
 
-    public function login($username, $password)
-    {
-        foreach ($this->users as $user) {
-            if ($user['username'] === $username && $user['password'] === $password) {
-                return true;
-            }
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $username = $_POST['username'];
+        $password = $_POST['password'];
+
+        if ($userModel->login($username, $password)) {
+            $_SESSION['user'] = ['username' => $username];
+            header('Location: ' . BASE_URL . '/dashboard');
+        } else {
+            $error = 'Username atau password salah';
+            $this->view('auth/login', ['error' => $error]);
         }
-        return false;
+    } else {
+        $this->view('auth/login');
     }
 }
