@@ -20,16 +20,20 @@ class App {
             $this->method = $url[1];
             unset($url[1]);
         }
+
         $this->params = $url ? array_values($url) : [];
-        
+
         call_user_func_array([$this->controller, $this->method], $this->params);
     }
 
     public function parseURL() {
         if (isset($_GET['url'])) {
-            return explode('/', filter_var(rtrim($_GET['url'], '/'), FILTER_SANITIZE_URL));
+            $url = explode('/', filter_var(rtrim($_GET['url'], '/'), FILTER_SANITIZE_URL));
+            $url[0] = ucfirst($url[0]); // perbaikan untuk huruf besar
+            return $url;
         }
-        return ['home'];
+        return ['Home'];
     }
 }
+
 

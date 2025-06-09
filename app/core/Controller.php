@@ -1,6 +1,8 @@
 // 4. app/core/Controller.php
 <?php
+{
 
+}
 class Controller {
     public function model($model) {
         require_once '../app/models/' . $model . '.php';
@@ -11,5 +13,7 @@ class Controller {
         require_once '../app/views/' . $view . '.php';
     }
 }
+
+
 
 
