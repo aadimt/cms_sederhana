@@ -1,47 +1,67 @@
 <?php
 
 class App {
-    protected $controller = 'PostController'; // Default controller
-    protected $method = 'index';     // Default method
+    // Default controller dan method jika URL kosong atau tidak valid
+    protected $controller = 'HomeController'; // Asumsi Anda punya HomeController
+    protected $method = 'index';
     protected $params = [];
 
     public function __construct() {
-        $url = $this->parseURL(); // Mendapatkan URL yang sudah diurai
+        $url = $this->parseURL(); // Mengambil dan membersihkan URL
 
-        // Memeriksa apakah $url tidak kosong dan elemen pertama ada
-        // ini untuk menentukan controller
-        if (!empty($url) && isset($url[0])) { //
-            // Memeriksa apakah file controller ada
-            if (file_exists('../app/controllers/' . ucfirst($url[0]) . 'Controller.php')) { //
-                $this->controller = ucfirst($url[0]) . 'Controller'; //
-                unset($url[0]); //
+        // --- Bagian Controller ---
+        // Cek apakah ada segmen URL untuk controller, dan apakah controller itu ada
+        if (!empty($url) && isset($url[0])) {
+            // Ubah segmen URL menjadi format nama kelas Controller (misal: post -> PostController)
+            $requestedController = ucfirst($url[0]) . 'Controller';
+            $controllerPath = BASEPATH . '/app/controllers/' . $requestedController . '.php';
+
+            if (file_exists($controllerPath)) {
+                $this->controller = $requestedController;
+                unset($url[0]); // Hapus segmen controller dari URL
             }
+            // else {
+            //     // Opsional: Redirect ke 404 atau Home jika controller tidak ditemukan
+            //     // header('Location: /404'); exit();
+            // }
         }
 
-        // Memuat file controller yang sesuai
-        require_once '../app/controllers/' . $this->controller . '.php'; //
-        $this->controller = new $this->controller; //
+        // Muat file controller dan instansiasi
+        // Pastikan kelas Controller base sudah dimuat sebelumnya oleh public/index.php
+        require_once BASEPATH . '/app/controllers/' . $this->controller . '.php';
+        $this->controller = new $this->controller(); // Tambahkan kurung () untuk instansiasi
 
-        // Memeriksa apakah elemen kedua dari URL ada dan merupakan method yang valid
-        // ini untuk menentukan method
-        if (isset($url[1]) && method_exists($this->controller, $url[1])) { //
-            $this->method = $url[1]; //
-            unset($url[1]); //
+
+        // --- Bagian Method ---
+        // Cek apakah ada segmen URL untuk method
+        if (isset($url[1])) {
+            // Pastikan method ada dan bisa diakses
+            if (method_exists($this->controller, $url[1])) {
+                $this->method = $url[1];
+                unset($url[1]); // Hapus segmen method dari URL
+            }
+            // else {
+            //     // Opsional: Redirect ke 404 atau tampilkan error method tidak ditemukan
+            // }
         }
 
-        // Mengambil sisa URL sebagai parameter
-        // Menggunakan array_values untuk mengatur ulang indeks setelah unset
-        $this->params = $url ? array_values($url) : []; //
+        // --- Bagian Parameters ---
+        // Ambil sisa segmen URL sebagai parameter
+        // array_values() untuk mengatur ulang indeks array setelah unset
+        $this->params = $url ? array_values($url) : [];
 
-        // Memanggil method controller dengan parameter yang sesuai
-        call_user_func_array([$this->controller, $this->method], $this->params); //
+        // Panggil method controller dengan parameter
+        call_user_func_array([$this->controller, $this->method], $this->params);
     }
 
     private function parseURL() {
         if (isset($_GET['url'])) {
-            // Membersihkan dan memisahkan URL menjadi bagian-bagian
-            return explode('/', filter_var(rtrim($_GET['url'], '/'), FILTER_SANITIZE_URL)); //
+            // Membersihkan dan memisahkan URL
+            // rtrim($_GET['url'], '/') untuk menghapus trailing slash
+            // FILTER_SANITIZE_URL untuk membersihkan URL dari karakter ilegal
+            $url = filter_var(rtrim($_GET['url'], '/'), FILTER_SANITIZE_URL);
+            return explode('/', $url);
         }
-        return []; // <-- Penting: Kembalikan array kosong jika $_GET['url'] tidak disetel
+        return []; // Selalu kembalikan array kosong jika $_GET['url'] tidak diset
     }
 }
